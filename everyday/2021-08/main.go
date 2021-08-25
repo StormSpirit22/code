@@ -1,16 +1,15 @@
 package main
 
 import (
-	"container/heap"
 	"fmt"
-	"sort"
 	"strconv"
 )
 
 func main() {
 	//fmt.Println(compress([]byte{'a','b','c','c','c','c','c','c'}))
 	//fmt.Println(getMaximumGenerated(15))
-	fmt.Println(findCheapestPrice(3, [][]int{{0,1,100},{1,2,100},{0,2,500}}, 0, 2, 1))
+	//fmt.Println(findCheapestPrice(3, [][]int{{0,1,100},{1,2,100},{0,2,500}}, 0, 2, 1))
+	fmt.Println(allPathsSourceTarget([][]int{{4,3,1},{3,2,4},{3},{4},{}}))
 }
 
 func compress(chars []byte) int {
@@ -118,21 +117,33 @@ func min(a, b int) int {
 	return b
 }
 
-func nthSuperUglyNumber(n int, primes []int) (ugly int) {
-	seen := map[int]bool{1: true}
-	h := &hp{[]int{1}}
-	for i := 0; i < n; i++ {
-		ugly = heap.Pop(h).(int)
-		for _, prime := range primes {
-			if next := ugly * prime; !seen[next] {
-				seen[next] = true
-				heap.Push(h, next)
-			}
+/*
+输入：graph = [[1,2],[3],[3],[]]
+输出：[[0,1,3],[0,2,3]]
+解释：有两条路径 0 -> 1 -> 3 和 0 -> 2 -> 3
+ */
+// 回溯法
+func allPathsSourceTarget(graph [][]int) [][]int {
+	var res [][]int
+	n := len(graph)
+
+	var backtrack func([]int, int)
+
+	backtrack = func(track []int, start int) {
+		fmt.Println(track)
+		if len(track) > 0 && track[len(track)-1] == n-1 {
+			tmp := make([]int, len(track))
+			copy(tmp, track)
+			res = append(res, tmp)
+			return
+		}
+
+		for i := 0; i < len(graph[start]); i++ {
+			track = append(track, graph[start][i])
+			backtrack(track, graph[start][i])
+			track = track[:len(track)-1]
 		}
 	}
-	return
+	backtrack([]int{0}, 0)
+	return res
 }
-
-type hp struct{ sort.IntSlice }
-func (h *hp) Push(v interface{}) { h.IntSlice = append(h.IntSlice, v.(int)) }
-func (h *hp) Pop() interface{}   { a := h.IntSlice; v := a[len(a)-1]; h.IntSlice = a[:len(a)-1]; return v }

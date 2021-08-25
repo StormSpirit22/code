@@ -14,7 +14,7 @@ func main() {
 /*
 输入: [3,2,1,5,6,4] 和 k = 2
 输出: 5
- */
+*/
 func findKthLargest(nums []int, k int) int {
 	h := &IntHeap{}
 	var res int
@@ -66,4 +66,5 @@ func nthSuperUglyNumber(n int, primes []int) (ugly int) {
 type hp struct{ sort.IntSlice }
 func (h *hp) Push(v interface{}) { h.IntSlice = append(h.IntSlice, v.(int)) }
 func (h *hp) Pop() interface{}   { a := h.IntSlice; v := a[len(a)-1]; h.IntSlice = a[:len(a)-1]; return v }
+
 
