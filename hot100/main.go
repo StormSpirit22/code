@@ -4,6 +4,10 @@ func main() {
 	
 }
 
+/*
+电话号码的字母组合
+https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/
+ */
 func letterCombinations(digits string) []string {
 	if len(digits) == 0 {
 		return []string{}
@@ -46,3 +50,64 @@ func letterCombinations(digits string) []string {
 	return res
 }
 
+type ListNode struct {
+	Val int
+	Next *ListNode
+}
+
+/*
+https://leetcode-cn.com/problems/intersection-of-two-linked-lists/
+相交链表
+给你两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null
+让长链表先走一段短链表的长度，然后一起走，看是否相等
+ */
+func getIntersectionNode(headA, headB *ListNode) *ListNode {
+	a, b := headA, headB
+	lenA, lenB := 0, 0
+	for a != nil && b != nil {
+		a = a.Next
+		b = b.Next
+		lenA ++
+		lenB ++
+	}
+	for a != nil {
+		a = a.Next
+		lenA ++
+
+	}
+	for b != nil {
+		b = b.Next
+		lenB ++
+	}
+
+	if lenA > lenB {
+		a = headA
+		b = headB
+	} else {
+		a = headB
+		b = headA
+		lenA, lenB = lenB, lenA
+	}
+	for i := 0; i < lenA - lenB; i++ {
+		a = a.Next
+	}
+	for a != b && a != nil && b != nil {
+		a = a.Next
+		b = b.Next
+	}
+	return a
+}
+
+func countBits(n int) []int {
+	res := make([]int, n+1)
+	for i := 0; i <= n; i++ {
+		count := 0
+		num := i
+		for num != 0 {
+			count += num & 1
+			num >>= 1
+		}
+		res[i] = count
+	}
+	return res
+}

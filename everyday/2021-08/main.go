@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 )
 
@@ -9,7 +10,8 @@ func main() {
 	//fmt.Println(compress([]byte{'a','b','c','c','c','c','c','c'}))
 	//fmt.Println(getMaximumGenerated(15))
 	//fmt.Println(findCheapestPrice(3, [][]int{{0,1,100},{1,2,100},{0,2,500}}, 0, 2, 1))
-	fmt.Println(allPathsSourceTarget([][]int{{4,3,1},{3,2,4},{3},{4},{}}))
+	//fmt.Println(allPathsSourceTarget([][]int{{4,3,1},{3,2,4},{3},{4},{}}))
+	fmt.Println(numRescueBoats([]int{1,2}, 3))
 }
 
 func compress(chars []byte) int {
@@ -146,4 +148,23 @@ func allPathsSourceTarget(graph [][]int) [][]int {
 	}
 	backtrack([]int{0}, 0)
 	return res
+}
+
+/*
+输入：people = [3,5,3,4], limit = 5
+输出：4
+解释：4 艘船分别载 (3), (3), (4), (5)
+ */
+func numRescueBoats(people []int, limit int) int {
+	sort.Ints(people)
+	left, right := 0, len(people)-1
+	boats := 0
+	for left <= right {
+		if people[right] + people[left] <= limit {
+			left++
+		}
+		right--
+		boats++
+	}
+	return boats
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"container/heap"
 	"fmt"
+	"sort"
 )
 
 func main() {
@@ -120,4 +121,52 @@ func merge(lists []*ListNode, l, r int) *ListNode {
 	}
 	mid := (l + r) >> 1
 	return mergeTwoLists(merge(lists, l, mid), merge(lists, mid+1, r))
+}
+
+/*
+https://leetcode-cn.com/problems/find-median-from-data-stream/
+大根堆小根堆优先队列
+*/
+
+// MedianFinder 寻找中位数
+type MedianFinder struct {
+	queMin, queMax mhp
+}
+
+
+func Constructor() MedianFinder {
+	return MedianFinder{}
+}
+
+func (mf *MedianFinder) AddNum(num int)  {
+	minQ, maxQ := &mf.queMin, &mf.queMax
+	if minQ.Len() == 0 || num <= -minQ.IntSlice[0] {
+		heap.Push(minQ, -num)
+		if maxQ.Len()+1 < minQ.Len() {
+			heap.Push(maxQ, -heap.Pop(minQ).(int))
+		}
+	} else {
+		heap.Push(maxQ, num)
+		if maxQ.Len() > minQ.Len() {
+			heap.Push(minQ, -heap.Pop(maxQ).(int))
+		}
+	}
+}
+
+
+func (mf *MedianFinder) FindMedian() float64 {
+	minQ, maxQ := mf.queMin, mf.queMax
+	if minQ.Len() > maxQ.Len() {
+		return float64(-minQ.IntSlice[0])
+	}
+	return float64(maxQ.IntSlice[0]-minQ.IntSlice[0]) / 2
+}
+
+type mhp struct { sort.IntSlice }
+func (h *mhp) Push(x interface{}) { h.IntSlice = append(h.IntSlice, x.(int)) }
+func (h *mhp) Pop() interface{} {
+	a := h.IntSlice
+	x := a[len(a)-1]
+	h.IntSlice = a[:len(a)-1]
+	return x
 }
