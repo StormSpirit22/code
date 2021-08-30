@@ -1,7 +1,7 @@
 package main
 
 func main() {
-	
+	diameterOfBinaryTree(&TreeNode{Val: 1, Left: &TreeNode{Val: 2, Left: &TreeNode{Val: 4}, Right: &TreeNode{Val: 5}}, Right: &TreeNode{Val: 3}})
 }
 
 /*
@@ -110,4 +110,46 @@ func countBits(n int) []int {
 		res[i] = count
 	}
 	return res
+}
+type TreeNode struct {
+	Val int
+	Left *TreeNode
+	Right *TreeNode
+}
+func diameterOfBinaryTree(root *TreeNode) int {
+	left, right := 0, 0
+	var traverseLeft func(*TreeNode, int) int
+	var traverseRight func(*TreeNode, int) int
+	var traverse func(*TreeNode)
+	traverseLeft = func(root *TreeNode, count int) int {
+		if root.Left == nil {
+			return count
+		}
+		count++
+		return traverseLeft(root.Left, count)
+	}
+	traverseRight = func(root *TreeNode, count int) int {
+		if root.Right == nil {
+			return count
+		}
+		count++
+		return traverseRight(root.Right, count)
+	}
+	traverse = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		tmpLeft := traverseLeft(root, 0)
+		tmpRight := traverseRight(root, 0)
+		if left < tmpLeft {
+			left = tmpLeft
+		}
+		if right < tmpRight {
+			right = tmpRight
+		}
+		traverse(root.Left)
+		traverse(root.Right)
+	}
+	traverse(root)
+	return left+right
 }

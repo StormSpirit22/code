@@ -168,3 +168,14 @@ func numRescueBoats(people []int, limit int) int {
 	}
 	return boats
 }
+
+func runningSum(nums []int) []int {
+	dp := make([]int, len(nums))
+	copy(dp, nums)
+	for i := range dp {
+		if i > 0 {
+			dp[i] = dp[i] + dp[i-1]
+		}
+	}
+	return dp
+}
