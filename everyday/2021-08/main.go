@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
 	"sort"
 	"strconv"
@@ -11,7 +12,8 @@ func main() {
 	//fmt.Println(getMaximumGenerated(15))
 	//fmt.Println(findCheapestPrice(3, [][]int{{0,1,100},{1,2,100},{0,2,500}}, 0, 2, 1))
 	//fmt.Println(allPathsSourceTarget([][]int{{4,3,1},{3,2,4},{3},{4},{}}))
-	fmt.Println(numRescueBoats([]int{1,2}, 3))
+	//fmt.Println(numRescueBoats([]int{1,2}, 3))
+	fmt.Println(sumOddLengthSubarrays([]int{1,4,2,5,3}))
 }
 
 func compress(chars []byte) int {
@@ -167,4 +169,21 @@ func numRescueBoats(people []int, limit int) int {
 		boats++
 	}
 	return boats
+}
+
+func sumOddLengthSubarrays(arr []int) int {
+	var sum int
+	n := len(arr)
+	prefixSum := make([]int, n+1)
+	for i := 0; i < n; i++ {
+		prefixSum[i+1] = prefixSum[i] + arr[i]
+	}
+	fmt.Println(prefixSum)
+	for i := 0; i < n; i++ {
+		for length := 1; length + i <= n; length += 2 {
+			sum += prefixSum[length+i] - prefixSum[i]
+		}
+	}
+	return sum
+	heap.Fix()
 }
