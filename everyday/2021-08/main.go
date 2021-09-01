@@ -1,10 +1,10 @@
 package main
 
 import (
-	"container/heap"
 	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -13,7 +13,8 @@ func main() {
 	//fmt.Println(findCheapestPrice(3, [][]int{{0,1,100},{1,2,100},{0,2,500}}, 0, 2, 1))
 	//fmt.Println(allPathsSourceTarget([][]int{{4,3,1},{3,2,4},{3},{4},{}}))
 	//fmt.Println(numRescueBoats([]int{1,2}, 3))
-	fmt.Println(sumOddLengthSubarrays([]int{1,4,2,5,3}))
+	//fmt.Println(sumOddLengthSubarrays([]int{1,4,2,5,3}))
+	fmt.Println(compareVersion("1.0.1", "1.0.0"))
 }
 
 func compress(chars []byte) int {
@@ -171,19 +172,50 @@ func numRescueBoats(people []int, limit int) int {
 	return boats
 }
 
-func sumOddLengthSubarrays(arr []int) int {
-	var sum int
-	n := len(arr)
-	prefixSum := make([]int, n+1)
-	for i := 0; i < n; i++ {
-		prefixSum[i+1] = prefixSum[i] + arr[i]
-	}
-	fmt.Println(prefixSum)
-	for i := 0; i < n; i++ {
-		for length := 1; length + i <= n; length += 2 {
-			sum += prefixSum[length+i] - prefixSum[i]
+//func sumOddLengthSubarrays(arr []int) int {
+//	var sum int
+//	n := len(arr)
+//	prefixSum := make([]int, n+1)
+//	for i := 0; i < n; i++ {
+//		prefixSum[i+1] = prefixSum[i] + arr[i]
+//	}
+//	fmt.Println(prefixSum)
+//	for i := 0; i < n; i++ {
+//		for length := 1; length + i <= n; length += 2 {
+//			sum += prefixSum[length+i] - prefixSum[i]
+//		}
+//	}
+//	return sum
+//	heap.Fix()
+//}
+
+func compareVersion(version1 string, version2 string) int {
+	v1 := strings.Split(version1, ".")
+	v2 := strings.Split(version2, ".")
+	var i int
+	for i = 0; i < len(v1); i++ {
+		if i >= len(v2) {
+			a, _ := strconv.Atoi(v1[i])
+			if a > 0 {
+				return 1
+			}
+		} else {
+			a, _ := strconv.Atoi(v1[i])
+			b, _ := strconv.Atoi(v2[i])
+			if a < b {
+				return -1
+			} else if a > b {
+				return 1
+			}
 		}
 	}
-	return sum
-	heap.Fix()
+	if len(v1) < len(v2) {
+		for ;i < len(v2); i++ {
+			b, _ := strconv.Atoi(v2[i])
+			if b > 0 {
+				return -1
+			}
+		}
+	}
+	return 0
 }
