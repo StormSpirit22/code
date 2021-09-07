@@ -11,6 +11,7 @@ func main() {
 }
 
 /*
+https://leetcode-cn.com/problems/next-permutation
 先从右边往左遍历，通过判断 nums[i] > nums[i-1] 找到左边的较小数 minLeft ，比如 [4,5,2,6,3,1]，较小数为 2 。
 再从右边往左边李，通过判断 nums[i] > nums[minLeft] 找到右边的较大数 maxRight， 为 3 。
 交换 nums[minLeft]， nums[maxRight]，成为 [4,5,3,6,2,1]， 可以知道交换后 minLeft 后面的必为降序序列，

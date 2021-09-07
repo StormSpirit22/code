@@ -104,6 +104,7 @@ https://leetcode-cn.com/problems/implement-rand10-using-rand7/
 2. 第二次rand7限定[1,5]，概率是1/5
 3. 二者结合可以得出10种概率相同的结果
 如果是rand11那么就生成 [1, 6] 和 [7, 12]，拒绝 12。
+medium
 */
 //func rand10() int {
 //	a, b := rand7(), rand7()
@@ -119,38 +120,25 @@ https://leetcode-cn.com/problems/implement-rand10-using-rand7/
 //	return 5 + b
 //}
 
+/*
+https://leetcode-cn.com/problems/split-a-string-in-balanced-strings/
+easy
+ */
 func balancedStringSplit(s string) int {
 	if len(s) == 0 {
 		return 0
 	}
 	var count int
-	l, r := 0, 0
-	if s[0] == 'L' {
-		l++
-	} else {
-		r++
-	}
-	for i := 1; i < len(s); i++ {
-
+	d := 0
+	for i := range s {
 		if s[i] == 'L' {
-			if r > 0 {
-				r--
-			} else {
-				l++
-			}
+			d++
 		} else {
-			if l > 0 {
-				l--
-			} else {
-				r++
-			}
+			d--
 		}
-		if l == 0 && r == 0 {
-			count ++
+		if d == 0 {
+			count++
 		}
-	}
-	if l == r && l != 0 {
-		count++
 	}
 	return count
 }

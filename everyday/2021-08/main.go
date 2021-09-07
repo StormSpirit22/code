@@ -1,7 +1,9 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
+	"math/rand"
 	"sort"
 	"strconv"
 	"strings"
@@ -17,6 +19,10 @@ func main() {
 	fmt.Println(compareVersion("1.0.1", "1.0.0"))
 }
 
+/*
+https://leetcode-cn.com/problems/string-compression/
+medium
+ */
 func compress(chars []byte) int {
 	left, right, write := 0, 0, 0
 	for right < len(chars) {
@@ -123,6 +129,7 @@ func min(a, b int) int {
 }
 
 /*
+https://leetcode-cn.com/problems/all-paths-from-source-to-target/
 输入：graph = [[1,2],[3],[3],[]]
 输出：[[0,1,3],[0,2,3]]
 解释：有两条路径 0 -> 1 -> 3 和 0 -> 2 -> 3
@@ -154,6 +161,7 @@ func allPathsSourceTarget(graph [][]int) [][]int {
 }
 
 /*
+https://leetcode-cn.com/problems/boats-to-save-people/
 输入：people = [3,5,3,4], limit = 5
 输出：4
 解释：4 艘船分别载 (3), (3), (4), (5)
@@ -172,22 +180,79 @@ func numRescueBoats(people []int, limit int) int {
 	return boats
 }
 
-//func sumOddLengthSubarrays(arr []int) int {
-//	var sum int
-//	n := len(arr)
-//	prefixSum := make([]int, n+1)
-//	for i := 0; i < n; i++ {
-//		prefixSum[i+1] = prefixSum[i] + arr[i]
-//	}
-//	fmt.Println(prefixSum)
-//	for i := 0; i < n; i++ {
-//		for length := 1; length + i <= n; length += 2 {
-//			sum += prefixSum[length+i] - prefixSum[i]
-//		}
-//	}
-//	return sum
-//	heap.Fix()
-//}
+type MedianFinder struct {
+	queMin, queMax mhp
+}
+
+/*
+https://leetcode-cn.com/problems/find-median-from-data-stream
+数据流的中位数
+hard
+ */
+
+func Constructor() MedianFinder {
+	return MedianFinder{}
+}
+
+func (mf *MedianFinder) AddNum(num int)  {
+	minQ, maxQ := &mf.queMin, &mf.queMax
+	if minQ.Len() == 0 || num <= -minQ.IntSlice[0] {
+		heap.Push(minQ, -num)
+		if maxQ.Len()+1 < minQ.Len() {
+			heap.Push(maxQ, -heap.Pop(minQ).(int))
+		}
+	} else {
+		heap.Push(maxQ, num)
+		if maxQ.Len() > minQ.Len() {
+			heap.Push(minQ, -heap.Pop(maxQ).(int))
+		}
+	}
+}
+
+
+func (mf *MedianFinder) FindMedian() float64 {
+	minQ, maxQ := mf.queMin, mf.queMax
+	if minQ.Len() > maxQ.Len() {
+		return float64(-minQ.IntSlice[0])
+	}
+	return float64(maxQ.IntSlice[0]-minQ.IntSlice[0]) / 2
+}
+
+type mhp struct { sort.IntSlice }
+func (h *mhp) Push(x interface{}) { h.IntSlice = append(h.IntSlice, x.(int)) }
+func (h *mhp) Pop() interface{} {
+	a := h.IntSlice
+	x := a[len(a)-1]
+	h.IntSlice = a[:len(a)-1]
+	return x
+}
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * obj := Constructor();
+ * obj.AddNum(num);
+ * param_2 := obj.FindMedian();
+ */
+
+
+/*
+https://leetcode-cn.com/problems/sum-of-all-odd-length-subarrays
+medium
+ */
+func sumOddLengthSubarrays(arr []int) int {
+	var sum int
+	n := len(arr)
+	prefixSum := make([]int, n+1)
+	for i := 0; i < n; i++ {
+		prefixSum[i+1] = prefixSum[i] + arr[i]
+	}
+	fmt.Println(prefixSum)
+	for i := 0; i < n; i++ {
+		for length := 1; length + i <= n; length += 2 {
+			sum += prefixSum[length+i] - prefixSum[i]
+		}
+	}
+	return sum
+}
 
 func compareVersion(version1 string, version2 string) int {
 	v1 := strings.Split(version1, ".")
@@ -218,4 +283,56 @@ func compareVersion(version1 string, version2 string) int {
 		}
 	}
 	return 0
+}
+
+/*
+https://leetcode-cn.com/problems/corporate-flight-bookings/
+利用查分数组来求解。差分数组实际上就是求前缀和的逆运算。举个例子，对于一个数组 arr, 某个区间 [l, r] 需要增加 x，
+可以求出来其对应的差分数组 nums（nums[i] = arr[i] - arr[i-1]），然后 nums[l] += x， nums[r+1] -= x，
+之后对 nums 求前缀和即可。这是对区间修改的简化操作，不需要去遍历该区间来修改原数组。
+在本题中已经给出各个区间的修改值，初始从 0 开始计算，那么查分数组初始也就是 n 个 0。
+由于是在 [1,n] 中求解，所以相对应的差分数组应该是 nums[l-1] += x， nums[r] -= x。但是 r 可能等于 n ，
+而差分数组最大索引是 n-1，所以当 r == n 时不做修改，而且本来 r = n 时相对于原数组 arr[n] 也没有意义。
+*/
+
+func corpFlightBookings(bookings [][]int, n int) []int {
+	nums := make([]int, n)
+	for _, b := range bookings {
+		nums[b[0]-1] += b[2]
+		if b[1] < n {
+			nums[b[1]] -= b[2]
+		}
+	}
+	for i := range nums {
+		if i > 0 {
+			nums[i] += nums[i-1]
+		}
+	}
+	return nums
+}
+
+/*
+https://leetcode-cn.com/problems/random-pick-with-weight
+很巧妙的一题，使用前缀和+二分法，
+*/
+
+type Solution struct {
+	Prefix []int
+}
+
+
+func Constructor(w []int) Solution {
+	for i := 1; i < len(w); i++ {
+		w[i] += w[i-1]
+	}
+	return Solution{w}
+}
+
+
+func (s *Solution) PickIndex() int {
+	// 因为 1 <= w[i] ，所以需要使用随机函数参数产生 [1, sum[n - 1]] 范围内的随机数
+	// 而 rand.Intn 是产生 [0, sum[n-1]) 的随机数，所以要 + 1
+	x := rand.Intn(s.Prefix[len(s.Prefix)-1]) + 1
+	index := sort.SearchInts(s.Prefix, x)
+	return index
 }
