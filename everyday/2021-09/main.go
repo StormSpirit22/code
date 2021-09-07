@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	fmt.Println(smallestK([]int{1,2,3}, 4))
+	//fmt.Println(smallestK([]int{1,2,3}, 4))
+	fmt.Println(balancedStringSplit("RLRRLLRLRL"))
 }
 
 type ListNode struct {
@@ -104,16 +105,52 @@ https://leetcode-cn.com/problems/implement-rand10-using-rand7/
 3. 二者结合可以得出10种概率相同的结果
 如果是rand11那么就生成 [1, 6] 和 [7, 12]，拒绝 12。
 */
-func rand10() int {
-	a, b := rand7(), rand7()
-	for a > 6 {
-		a = rand7()
+//func rand10() int {
+//	a, b := rand7(), rand7()
+//	for a > 6 {
+//		a = rand7()
+//	}
+//	for b > 5 {
+//		b = rand7()
+//	}
+//	if a & 1 == 0 {
+//		return b
+//	}
+//	return 5 + b
+//}
+
+func balancedStringSplit(s string) int {
+	if len(s) == 0 {
+		return 0
 	}
-	for b > 5 {
-		b = rand7()
+	var count int
+	l, r := 0, 0
+	if s[0] == 'L' {
+		l++
+	} else {
+		r++
 	}
-	if a & 1 == 0 {
-		return b
+	for i := 1; i < len(s); i++ {
+
+		if s[i] == 'L' {
+			if r > 0 {
+				r--
+			} else {
+				l++
+			}
+		} else {
+			if l > 0 {
+				l--
+			} else {
+				r++
+			}
+		}
+		if l == 0 && r == 0 {
+			count ++
+		}
 	}
-	return 5 + b
+	if l == r && l != 0 {
+		count++
+	}
+	return count
 }
