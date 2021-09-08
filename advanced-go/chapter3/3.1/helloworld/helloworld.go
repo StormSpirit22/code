@@ -1,0 +1,3 @@
+package helloworld
+
+func PrintMe()
