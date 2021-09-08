@@ -8,7 +8,8 @@ import (
 
 func main() {
 	//fmt.Println(smallestK([]int{1,2,3}, 4))
-	fmt.Println(balancedStringSplit("RLRRLLRLRL"))
+	//fmt.Println(balancedStringSplit("RLRRLLRLRL"))
+	fmt.Println(findMaximizedCapital(2,0,[]int{1,2,3},[]int{0,1,1}))
 }
 
 type ListNode struct {
@@ -141,4 +142,51 @@ func balancedStringSplit(s string) int {
 		}
 	}
 	return count
+}
+
+/*
+https://leetcode-cn.com/problems/ipo/
+优先队列
+ */
+func findMaximizedCapital(k int, w int, profits []int, capital []int) int {
+	p := PQ{}
+	n := len(capital)
+	projects := make([]*Project, n)
+	for i := 0; i < n; i++ {
+		projects[i] = &Project{capital: capital[i], profit: profits[i]}
+	}
+	// 先根据 capital 从小到大排序，这样就可以把小于 w 的一次性找出来
+	sort.Slice(projects, func(i, j int) bool { return projects[i].capital < projects[j].capital })
+	var cur int
+	for ; k > 0; k-- {
+		// 将符合要求的项目全部压入大根堆中，然后出栈利润最高的那个项目
+		for cur < n && projects[cur].capital <= w {
+			heap.Push(&p, projects[cur])
+			cur++
+		}
+		if p.Len() == 0 {
+			return w
+		}
+		w += heap.Pop(&p).(*Project).profit
+	}
+	return w
+}
+
+type PQ []*Project
+
+type Project struct {
+	capital int
+	profit int
+}
+
+func (p PQ) Len() int { return len(p) }
+func (p PQ) Swap(i, j int) { p[i],p[j] = p[j],p[i] }
+func (p PQ) Less(i, j int) bool { return p[i].profit > p[j].profit }
+func (p *PQ) Push(x interface{}) {
+	*p = append(*p, x.(*Project))
+}
+func (p *PQ) Pop() interface{} {
+	x := (*p)[len(*p)-1]
+	*p = (*p)[:len(*p)-1]
+	return x
 }
