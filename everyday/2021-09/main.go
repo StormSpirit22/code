@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"container/heap"
 	"fmt"
 	"sort"
@@ -9,17 +10,19 @@ import (
 func main() {
 	//fmt.Println(smallestK([]int{1,2,3}, 4))
 	//fmt.Println(balancedStringSplit("RLRRLLRLRL"))
-	fmt.Println(findMaximizedCapital(2,0,[]int{1,2,3},[]int{0,1,1}))
+	//fmt.Println(findMaximizedCapital(2,0,[]int{1,2,3},[]int{0,1,1}))
+	//fmt.Println(fullJustify([]string{"Science","is","what","we","understand","well","enough","to","explain","to","a","computer.","Art","is","everything","else","we","do"}, 20))
+	fmt.Println(findLongestWord("aaa", []string{"aaa","aa"}))
 }
 
 type ListNode struct {
-    Val int
-    Next *ListNode
+	Val  int
+	Next *ListNode
 }
 
 /*
 https://leetcode-cn.com/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof/
- */
+*/
 func getKthFromEnd(head *ListNode, k int) *ListNode {
 	tmp := head
 	for i := 0; i < k; i++ {
@@ -77,7 +80,7 @@ func(h *hp) Pop() interface{} {
 /*
 https://leetcode-cn.com/problems/smallest-k-lcci/
 官方答案
- */
+*/
 func smallestK(arr []int, k int) []int {
 	if k == 0 {
 		return nil
@@ -94,6 +97,7 @@ func smallestK(arr []int, k int) []int {
 }
 
 type hp struct{ sort.IntSlice }
+
 func (h hp) Less(i, j int) bool { return h.IntSlice[i] > h.IntSlice[j] }
 func (hp) Push(interface{})     {}
 func (hp) Pop() (_ interface{}) { return }
@@ -124,7 +128,7 @@ medium
 /*
 https://leetcode-cn.com/problems/split-a-string-in-balanced-strings/
 easy
- */
+*/
 func balancedStringSplit(s string) int {
 	if len(s) == 0 {
 		return 0
@@ -147,7 +151,8 @@ func balancedStringSplit(s string) int {
 /*
 https://leetcode-cn.com/problems/ipo/
 优先队列
- */
+hard
+*/
 func findMaximizedCapital(k int, w int, profits []int, capital []int) int {
 	p := PQ{}
 	n := len(capital)
@@ -176,11 +181,11 @@ type PQ []*Project
 
 type Project struct {
 	capital int
-	profit int
+	profit  int
 }
 
-func (p PQ) Len() int { return len(p) }
-func (p PQ) Swap(i, j int) { p[i],p[j] = p[j],p[i] }
+func (p PQ) Len() int           { return len(p) }
+func (p PQ) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p PQ) Less(i, j int) bool { return p[i].profit > p[j].profit }
 func (p *PQ) Push(x interface{}) {
 	*p = append(*p, x.(*Project))
@@ -189,4 +194,109 @@ func (p *PQ) Pop() interface{} {
 	x := (*p)[len(*p)-1]
 	*p = (*p)[:len(*p)-1]
 	return x
+}
+
+func fullJustify(words []string, maxWidth int) []string {
+	var ans []string
+	var line string
+	var lenLine int
+	var wrap []string
+	for i := 0; i < len(words); i++ {
+		m := len(words[i])
+		if lenLine + m < maxWidth {
+			wrap = append(wrap, words[i])
+			lenLine += m + 1
+		} else {
+			if lenLine + m == maxWidth {
+				tmp := ""
+				for i := range wrap {
+					tmp += wrap[i] + " "
+				}
+				tmp += words[i]
+				line = tmp
+			} else {
+				i --
+				lenLine -= len(wrap)
+				gap := len(wrap) - 1
+				var mod int
+				var divide int
+				if gap > 0 {
+					mod = (maxWidth - lenLine) % gap
+					divide = (maxWidth - lenLine) / gap
+				}
+				var length int
+				var tmp bytes.Buffer
+				count := 0
+				for k := 0; k < len(wrap); k++ {
+					tmp.WriteString(wrap[k])
+					if count < mod {
+						length = divide + 1
+						count ++
+					} else {
+						length = divide
+					}
+					if length == 0 {
+						length = maxWidth - tmp.Len()
+					}
+					for p := 0; p < length && tmp.Len() < maxWidth; p++ {
+						tmp.WriteString(" ")
+					}
+				}
+				line = tmp.String()
+			}
+			fmt.Println("line", line)
+			lenLine = 0
+			ans = append(ans, line)
+			wrap = []string{}
+		}
+	}
+	if len(wrap) > 0 {
+		var tmp bytes.Buffer
+		for i := range wrap {
+			tmp.WriteString(wrap[i])
+			if tmp.Len() < maxWidth {
+				tmp.WriteString(" ")
+			}
+		}
+		for tmp.Len() < maxWidth {
+			tmp.WriteString(" ")
+		}
+		ans = append(ans, tmp.String())
+	}
+	return ans
+}
+
+func findLongestWord(s string, dictionary []string) string {
+	sort.Slice(dictionary, func(x, y int) bool {
+		if len(dictionary[x]) > len(dictionary[y]) {
+			return true
+		} else if len(dictionary[x]) < len(dictionary[y]) {
+			return false
+		}
+		for i := range dictionary[x] {
+			if dictionary[x][i] > dictionary[y][i] {
+				return false
+			} else {
+				return true
+			}
+		}
+		return true
+	})
+	fmt.Println(dictionary)
+	for _, d := range dictionary {
+		i, j := 0, 0
+		for ; i < len(d); i++ {
+			for j < len(s) && d[i] != s[j] {
+				j++
+			}
+			j++
+			if j > len(s) {
+				break
+			}
+		}
+		if i == len(d) {
+			return d
+		}
+	}
+	return ""
 }
