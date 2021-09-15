@@ -28,12 +28,12 @@ func main() {
 
 /*
 使用 tcp 服务而不是 Go 的 rpc 服务（即停掉 server)，命令行里输入 nc -l 1234
-在 client 里运行 go run main.go
+在 client 里运行 go run plugin.go
 nc 命令行会输出：
 
 {"method":"HelloService.Hello","params":["hello"],"id":0}
 
-然后在 server 里运行 go run main.go，在命令行里输入
+然后在 server 里运行 go run plugin.go，在命令行里输入
 
  echo -e '{"method":"HelloService.Hello","params":["hello"],"id":1}' | nc localhost 1234
 

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"code/advanced-go/chapter4/4.1/2_safey_rpc/server/server"
 	"log"
 	"net"
 	"net/rpc"
+	"rpc_protobuf/4.1/2_safey_rpc/server/server"
 )
 
 type HelloService struct {}

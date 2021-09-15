@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"container/heap"
 	"fmt"
+	"math"
 	"sort"
 )
 
@@ -12,7 +13,8 @@ func main() {
 	//fmt.Println(balancedStringSplit("RLRRLLRLRL"))
 	//fmt.Println(findMaximizedCapital(2,0,[]int{1,2,3},[]int{0,1,1}))
 	//fmt.Println(fullJustify([]string{"Science","is","what","we","understand","well","enough","to","explain","to","a","computer.","Art","is","everything","else","we","do"}, 20))
-	fmt.Println(findLongestWord("aaa", []string{"aaa","aa"}))
+	//fmt.Println(findLongestWord("aaa", []string{"aaa","aa"}))
+	fmt.Println(findPeakElement([]int{3,2,1}))
 }
 
 type ListNode struct {
@@ -299,4 +301,32 @@ func findLongestWord(s string, dictionary []string) string {
 		}
 	}
 	return ""
+}
+
+func findPeakElement(nums []int) int {
+	n := len(nums)
+	nums2 := make([]int, n+2)
+	nums2[0] = math.MinInt64
+	nums2[n+1] = math.MinInt64
+
+	for i := 0; i < n; i++ {
+		nums2[i+1] = nums[i]
+	}
+	left, right := 0, n+1
+	mid := (left + right) / 2
+	for !(nums2[mid] > nums2[mid-1] && nums2[mid] > nums2[mid+1]) {
+		if nums2[mid] < nums2[mid-1] {
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+		mid = (left + right) / 2
+		if mid == 0 {
+			mid ++
+		}
+		if mid == n+1 {
+			mid = n
+		}
+	}
+	return mid - 1
 }
