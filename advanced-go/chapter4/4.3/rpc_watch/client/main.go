@@ -26,15 +26,16 @@ func doClientWork(client *rpc.Client) {
 		fmt.Println("watch:", keyChanged)
 	} ()
 
-	err := client.Call(
-		"KVStoreService.Set", [2]string{"abc", "abc-value2"},
-		new(struct{}),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+	var err error
+	//err := client.Call(
+	//	"KVStoreService.Set", [2]string{"abc", "abc-value2"},
+	//	new(struct{}),
+	//)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 	err = client.Call(
-		"KVStoreService.Set", [2]string{"abc", "abc-value-modified2"},
+		"KVStoreService.Set", [2]string{"abc", "abc-value-modified"},
 		new(struct{}),
 	)
 	if err != nil {

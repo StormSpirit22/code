@@ -66,8 +66,10 @@ func (p *KVStoreService) Watch(timeoutSecond int, keyChanged *string) error {
 	for {
 		select {
 		case <-time.After(time.Duration(timeoutSecond) * time.Second):
+			fmt.Println(id, "id timeout")
 			return fmt.Errorf("timeout")
 		case key := <-ch:
+			fmt.Println(id, key)
 			*keyChanged = key
 			return nil
 		}
