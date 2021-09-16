@@ -17,9 +17,12 @@ func main() {
 }
 
 func doClientWork(client *rpc.Client) {
+	defer func(start time.Time) {
+		fmt.Printf("doClientWork time cost %fs", time.Since(start).Seconds())
+	}(time.Now())
 	go func() {
 		var keyChanged string
-		err := client.Call("KVStoreService.Watch", 30, &keyChanged)
+		err := client.Call("KVStoreService.Watch", 10, &keyChanged)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -34,13 +37,16 @@ func doClientWork(client *rpc.Client) {
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
+	reply := ""
+	err = client.Call("KVStoreService.Get", "abc", &reply)
+	fmt.Println(reply)
 	err = client.Call(
-		"KVStoreService.Set", [2]string{"abc", "abc-value-modified"},
+		"KVStoreService.Set", [2]string{"abc", "abc-value-modified2"},
 		new(struct{}),
 	)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	time.Sleep(time.Second*3)
+	time.Sleep(time.Second*20)
 }

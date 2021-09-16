@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/rpc"
@@ -25,7 +26,9 @@ func main() {
 		if err != nil {
 			log.Fatal("Accept error:", err)
 		}
+		fmt.Println("start conn ")
 
-		rpc.ServeConn(conn)
+		// 这里会等到 conn 断掉再继续下一个连接
+		go rpc.ServeConn(conn)
 	}
 }

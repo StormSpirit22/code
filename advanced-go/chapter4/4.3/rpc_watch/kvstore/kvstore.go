@@ -54,6 +54,9 @@ func (p *KVStoreService) Set(kv [2]string, reply *struct{}) error {
 // Watch 方法用于在某个限定的时间内，观察当有key变化时将key作为返回值返回。如果超过时间后依然没有key被修改，则返回超时的错误。
 // Watch的实现中，用唯一的id表示每个Watch调用，然后根据id将自身对应的过滤器函数注册到p.filter列表。
 func (p *KVStoreService) Watch(timeoutSecond int, keyChanged *string) error {
+	defer func(start time.Time) {
+		fmt.Printf("Watch time cost %fs", time.Since(start).Seconds())
+	}(time.Now())
 	id := fmt.Sprintf("watch-%s-%03d", time.Now(), rand.Int())
 	ch := make(chan string, 10) // buffered
 
@@ -69,7 +72,7 @@ func (p *KVStoreService) Watch(timeoutSecond int, keyChanged *string) error {
 			fmt.Println(id, "id timeout")
 			return fmt.Errorf("timeout")
 		case key := <-ch:
-			fmt.Println(id, key)
+			fmt.Println("changed:", id, key)
 			*keyChanged = key
 			return nil
 		}

@@ -14,7 +14,8 @@ func main() {
 	//fmt.Println(findMaximizedCapital(2,0,[]int{1,2,3},[]int{0,1,1}))
 	//fmt.Println(fullJustify([]string{"Science","is","what","we","understand","well","enough","to","explain","to","a","computer.","Art","is","everything","else","we","do"}, 20))
 	//fmt.Println(findLongestWord("aaa", []string{"aaa","aa"}))
-	fmt.Println(findPeakElement([]int{3,2,1}))
+	//fmt.Println(findPeakElement([]int{3,2,1}))
+	fmt.Println(findWords([][]byte{{'o','a','a','n'},{'e','t','a','e'},{'i','h','k','r'},{'i','f','l','v'}}, []string{"oath","pea","eat","rain","oathi","oathk","oathf","oate","oathii","oathfi","oathfii"}))
 }
 
 type ListNode struct {
@@ -329,4 +330,63 @@ func findPeakElement(nums []int) int {
 		}
 	}
 	return mid - 1
+}
+
+/*
+https://leetcode-cn.com/problems/word-search-ii/
+hard
+前缀树 回溯
+ */
+func findWords(board [][]byte, words []string) []string {
+	wMap := make(map[string]bool)
+	for _, w := range words {
+		wMap[w] = true
+	}
+	var res []string
+	resMap := make(map[string]struct{})
+	m, n := len(board), len(board[0])
+	dirs := [][]int{{-1, 0}, {1, 0}, {0, 1}, {0, -1}}
+	visited := make([][]bool, m)
+	for i := range visited {
+		visited[i] = make([]bool, n)
+	}
+	var backtrack func([][]bool, [][]byte, int, int, bytes.Buffer)
+	backtrack = func(visited [][]bool, board [][]byte, i, j int, track bytes.Buffer) {
+		if track.Len() > 10 {
+			return
+		}
+		if wMap[track.String()] {
+			if _, ok := resMap[track.String()]; !ok {
+				res = append(res, track.String())
+				resMap[track.String()] = struct{}{}
+				// return
+			}
+		}
+
+		for _, d := range dirs {
+			//fmt.Println(i, j)
+			i, j = i + d[0], j + d[1]
+			if i < 0 || i > m-1 || j < 0 || j > n-1 || visited[i][j] {
+				i, j = i - d[0], j - d[1]
+				continue
+			}
+			visited[i][j] = true
+			track.WriteByte(board[i][j])
+			backtrack(visited, board, i, j, track)
+			visited[i][j] = false
+			i, j = i - d[0], j - d[1]
+			track.Truncate(track.Len()-1)
+		}
+	}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			var s bytes.Buffer
+			s.WriteByte(board[i][j])
+			visited[i][j] = true
+			backtrack(visited, board, i, j, s)
+			visited[i][j] = false
+		}
+	}
+	sort.Strings(res)
+	return res
 }
