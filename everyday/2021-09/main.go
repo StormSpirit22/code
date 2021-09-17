@@ -390,3 +390,29 @@ func findWords(board [][]byte, words []string) []string {
 	sort.Strings(res)
 	return res
 }
+
+/*
+https://leetcode-cn.com/problems/valid-sudoku
+medium
+ */
+func isValidSudoku(board [][]byte) bool {
+	var lines [9][9]int
+	var columns [9][9]int
+	var box [9][9]int
+	for i := range board {
+		for j := 0; j < len(board[i]); j++ {
+			if board[i][j] != '.' {
+				num := board[i][j] - '0' - 1
+				index := (i / 3) * 3 + j / 3
+
+				if lines[i][num] == 1 || columns[j][num] == 1 || box[index][num] == 1 {
+					return false
+				}
+				lines[i][num] = 1
+				columns[j][num] = 1
+				box[index][num] = 1
+			}
+		}
+	}
+	return true
+}
