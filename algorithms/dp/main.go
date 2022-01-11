@@ -3,7 +3,9 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println(minDistance("sea", "eat"))
+	//fmt.Println(minDistance("sea", "eat"))
+	//fmt.Println(longestPalindrome("cbbd"))
+	fmt.Println(longestPalindrome2("cbbd"))
 }
 
 func minDistance(word1 string, word2 string) int {
@@ -42,4 +44,70 @@ func min(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func longestPalindrome(s string) string {
+	var start, end, maxLength int
+	n := len(s)
+	dp := make([][]bool, n)
+	for i := range dp {
+		dp[i] = make([]bool, n)
+		dp[i][i] = true
+	}
+
+	for i := n-2; i >= 0; i-- {
+		for j := i+1; j < n; j++ {
+			if s[i] == s[j] {
+				if j - i == 1 || j - i == 2 {
+					dp[i][j] = true
+				} else {
+					dp[i][j] = dp[i+1][j-1]
+				}
+			} else {
+				dp[i][j] = false
+			}
+		}
+	}
+	fmt.Println(dp)
+	for i := range dp {
+		for j := range dp[i] {
+			if dp[i][j] {
+				if maxLength < j-i {
+					maxLength = j-i
+					start = i
+					end = j
+				}
+			}
+		}
+	}
+	return s[start:end+1]
+}
+
+func longestPalindrome2(s string) string {
+	var maxLength int
+	var res string
+	// 中心扩散算法
+	for i := 0; i < len(s); i++ {
+		l1, r1 := helper(i, i, s)
+		l2, r2 := helper(i, i+1, s)
+		len1, len2 := r1 - l1, r2 - l2
+		if len1 > len2 {
+			if maxLength < len1 {
+				maxLength = len1
+				res = s[l1:r1+1]
+			}
+		} else if maxLength < len2 {
+			maxLength = len2
+			res = s[l2:r2+1]
+		}
+	}
+	return res
+}
+
+func helper(l, r int, s string) (int, int) {
+	for l >= 0 && r < len(s) && s[l] == s[r] {
+		l --
+		r ++
+	}
+	return l+1, r-1
 }
