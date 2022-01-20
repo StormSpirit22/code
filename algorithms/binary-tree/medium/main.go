@@ -6,7 +6,9 @@ func main() {
 	//root := &TreeNode{Val: 1, Right: &TreeNode{Val: 2}}
 	//flatten(root)
 
-	buildTree([]int{9,3,15,20,7}, []int{9,15,7,20,3})
+	//buildTree([]int{9,3,15,20,7}, []int{9,15,7,20,3})
+	root := &TreeNode{Val: 1, Left: &TreeNode{Val: 2, Left: &TreeNode{Val: 3}}}
+	fmt.Println(minDepth(root))
 }
 
 type TreeNode struct {
@@ -70,4 +72,32 @@ func buildTree(inorder []int, postorder []int) *TreeNode {
 	root.Right = buildTree(inorder[index+1:], postorder[index:])
 
 	return root
+}
+
+func minDepth(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	var count int
+	var queue []*TreeNode
+	queue = append(queue, root)
+
+	for len(queue) > 0 {
+		n := len(queue)
+		count++
+		for i := 0; i < n; i++ {
+			node := queue[i]
+			if node.Left == nil && node.Right == nil {
+				return count
+			}
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		queue = queue[n:]
+	}
+	return count
 }
