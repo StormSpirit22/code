@@ -19,7 +19,6 @@ func main() {
 
 func test2() []func() {
 	var s []func()
-	error
 	for i := 0; i < 2; i++ {
 		x := i									// x 每次循环都重新定义
 		s = append(s, func() {
