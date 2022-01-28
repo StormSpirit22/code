@@ -5,6 +5,35 @@ func main() {
 }
 
 /*
+比如红色矩形的面积为，[0,0,4,3] 的面积 - 红色矩形上面矩形的面积 - 左边矩形的面积 + 左上矩形的面积。
+*/
+type NumMatrix struct {
+	PrefixSum [][]int
+}
+
+
+func Constructor(matrix [][]int) NumMatrix {
+	n, m := len(matrix), len(matrix[0])
+	ps := make([][]int, n+1)
+	for i := range ps {
+		ps[i] = make([]int, m+1)
+	}
+
+	for i := 1; i < n+1; i++ {
+		for j := 1; j < m+1; j++ {
+			ps[i][j] = ps[i-1][j] + ps[i][j-1] - ps[i-1][j-1] + matrix[i-1][j-1]
+		}
+	}
+	return NumMatrix{PrefixSum: ps}
+}
+
+
+func (this *NumMatrix) SumRegion(row1 int, col1 int, row2 int, col2 int) int {
+	return this.PrefixSum[row2+1][col2+1] - this.PrefixSum[row2+1][col1] - this.PrefixSum[row1][col2+1]+ this.PrefixSum[row1][col1]
+
+}
+
+/*
 https://leetcode-cn.com/problems/corporate-flight-bookings/
 利用查分数组来求解。差分数组实际上就是求前缀和的逆运算。举个例子，对于一个数组 arr, 某个区间 [l, r] 需要增加 x，
 可以求出来其对应的差分数组 nums（nums[i] = arr[i] - arr[i-1]），然后 nums[l] += x， nums[r+1] -= x，
